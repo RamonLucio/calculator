@@ -28,7 +28,10 @@ keys.addEventListener('click', e => {
     if (e.target.matches('button')) {
 
         if (!action) {
-            if (displayedNum === '0' || previousKeyType === 'operator') {
+            if (displayedNum === '0' ||
+                previousKeyType === 'operator' ||
+                previousKeyType === 'calculate'
+            ) {
                 display.textContent = keyContent
             } else {
                 display.textContent = displayedNum + keyContent
@@ -46,7 +49,10 @@ keys.addEventListener('click', e => {
             const operator = calculator.dataset.operator
             const secondValue = displayedNum
 
-            if (firstValue && operator && previousKeyType !== 'operator') {
+            if (firstValue &&
+                operator && 
+                previousKeyType !== 'operator' &&
+                previousKeyType !== 'calculate') {
                 const calcValue = calculate(firstValue, operator, secondValue)
                 display.textContent = calcValue
                 calculator.dataset.firstValue = calcValue
@@ -61,13 +67,27 @@ keys.addEventListener('click', e => {
         if (action === 'decimal') {
             if (!displayedNum.includes('.')) {
                 display.textContent = displayedNum + '.'
-            } else if (previousKeyType === 'operator') {
+            } else if (previousKeyType === 'operator' || previousKeyType === 'calculate') {
                 display.textContent = '0.'
             }
             calculator.dataset.previousKey = 'decimal'
         }
+
+        if (action !== 'clear') {
+            const clearButton = calculator.querySelector('[data-action=clear]')
+            clearButton.textContent = 'CE'
+        }
         
         if (action === 'clear') {
+            if (key.textContent === 'AC') {
+                calculator.dataset.firstValue = ''
+                calculator.dataset.modValue = ''
+                calculator.dataset.operator = ''
+                calculator.dataset.previousKeyType = ''
+            } else {
+                key.textContent = 'AC'
+            }
+            display.textContent = 0
             calculator.dataset.previousKeyType = 'clear'
         }
         
